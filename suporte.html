@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Suporte - Fortune Bet</title>
+    <style>
+        body { background: #0a192f; color: white; font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        .chat-box { background: #112240; padding: 20px; border-radius: 10px; height: 400px; overflow-y: auto; border: 1px solid #d4af37; }
+        .msg { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .msg.me { background: #1e3a8a; text-align: right; }
+        .msg.admin { background: #233554; border-left: 3px solid #d4af37; }
+        input { width: 70%; padding: 10px; border-radius: 5px; border: none; }
+        button { padding: 10px 20px; background: #d4af37; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2 style="color: #d4af37;">Suporte ao Cliente</h2>
+    <div id="chat-box" class="chat-box">Carregando...</div>
+    <br>
+    <input type="text" id="msg-input" placeholder="Digite sua dúvida...">
+    <button onclick="enviar()">Enviar</button>
+    <br><br>
+    <a href="index.html" style="color: #8892b0;">Voltar</a>
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('usuario'));
+        if(!user) window.location.href = 'login.html';
+
+        async function carregar() {
+            const req = await fetch('/chat/minhas', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: user.email }) });
+            const msgs = await req.json();
+            const box = document.getElementById('chat-box');
+            box.innerHTML = '';
+
+            msgs.forEach(m => {
+                box.innerHTML += `<div class="msg me">Você: ${m.mensagem}</div>`;
+                if(m.resposta) {
+                    box.innerHTML += `<div class="msg admin">🤖 Suporte: ${m.resposta}</div>`;
+                }
+            });
+        }
+
+        async function enviar() {
+            const txt = document.getElementById('msg-input').value;
+            if(!txt) return;
+            await fetch('/chat/enviar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: user.email, mensagem: txt }) });
+            document.getElementById('msg-input').value = '';
+            carregar();
+        }
+
+        setInterval(carregar, 3000); // Atualiza a cada 3 segundos
+        carregar();
+    </script>
+</body>
+</html>
