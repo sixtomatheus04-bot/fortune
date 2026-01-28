@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortune Dragon 🐉</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0a192f;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .slot-machine {
+            background: #112240;
+            padding: 20px;
+            border-radius: 20px;
+            border: 4px solid #d4af37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            width: 300px;
+        }
+        .reels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: #000;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .reel {
+            font-size: 3em;
+            width: 80px;
+            height: 80px;
+            background: #233554;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            border: 1px solid #d4af37;
+        }
+        .controls input {
+            padding: 10px;
+            width: 80px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .btn-spin {
+            background: linear-gradient(45deg, #ff4d4d, #d4af37);
+            border: none;
+            padding: 15px 40px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        .btn-spin:active { transform: scale(0.95); }
+        .win-msg { color: #4dff88; font-weight: bold; height: 30px; margin-top: 10px; }
+        .back-btn { margin-top: 20px; color: #8892b0; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <h2 style="color: #d4af37;">🐉 FORTUNE DRAGON</h2>
+    
+    <div class="slot-machine">
+        <div style="margin-bottom: 10px;">Saldo: <span id="saldo-display" style="color: #4dff88;">R$ 0.00</span></div>
+        
+        <div class="reels">
+            <div class="reel" id="r1">❓</div>
+            <div class="reel" id="r2">❓</div>
+            <div class="reel" id="r3">❓</div>
+        </div>
+
+        <div class="controls">
+            <label>Aposta: </label>
+            <input type="number" id="valor-aposta" value="10.00" min="1">
+        </div>
+        
+        <div class="win-msg" id="msg">Boa sorte!</div>
+        <button class="btn-spin" onclick="girar()">GIRAR 🔄</button>
+    </div>
+
+    <a href="index.html" class="back-btn">⬅ Voltar ao Lobby</a>
+
+    <script>
+        const API_URL = ''; // Vercel usa vazio
+        const simbolos = ['🍒', '🍋', '🍇', '💎', '🐉']; // Dragão é o mais valioso
+        let usuario = JSON.parse(localStorage.getItem('usuario'));
+
+        // Carrega saldo inicial
+        if(usuario) {
+            document.getElementById('saldo-display').innerText = `R$ ${parseFloat(usuario.saldo).toFixed(2)}`;
+        } else {
+            alert("Faça login para jogar!");
+            window.location.href = 'login.html';
+        }
+
+        async function girar() {
+            const aposta = parseFloat(document.getElementById('valor-aposta').value);
+            const msg = document.getElementById('msg');
+            
+            if(aposta > usuario.saldo) return alert("Saldo insuficiente!");
+            if(aposta <= 0) return alert("Aposta inválida!");
+
+            // 1. Desconta saldo visualmente
+            usuario.saldo -= aposta;
+            atualizarVisual();
+            msg.innerText = "Girando...";
+
+            // 2. Animação simples (Sorteio)
+            let voltas = 0;
+            const intervalo = setInterval(() => {
+                document.getElementById('r1').innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+                document.getElementById('r2').innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+                document.getElementById('r3').innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+                voltas++;
+                
+                if(voltas > 10) {
+                    clearInterval(intervalo);
+                    verificarVitoria(aposta);
+                }
+            }, 100);
+        }
+
+        async function verificarVitoria(aposta) {
+            const r1 = document.getElementById('r1').innerText;
+            const r2 = document.getElementById('r2').innerText;
+            const r3 = document.getElementById('r3').innerText;
+            const msg = document.getElementById('msg');
+
+            let multiplicador = 0;
+
+            // Regras simples
+            if(r1 === r2 && r2 === r3) {
+                if(r1 === '🐉') multiplicador = 20; // Jackpot
+                else if(r1 === '💎') multiplicador = 10;
+                else multiplicador = 5;
+            } else if (r1 === r2 || r2 === r3 || r1 === r3) {
+                multiplicador = 1.5; // Parzinho paga pouco
+            }
+
+            if(multiplicador > 0) {
+                const ganho = aposta * multiplicador;
+                usuario.saldo += ganho;
+                msg.innerText = `GANHOU R$ ${ganho.toFixed(2)}! (x${multiplicador})`;
+                msg.style.color = "#d4af37";
+            } else {
+                msg.innerText = "Tente de novo!";
+                msg.style.color = "white";
+            }
+
+            atualizarVisual();
+            salvarNoServidor();
+        }
+
+        function atualizarVisual() {
+            document.getElementById('saldo-display').innerText = `R$ ${parseFloat(usuario.saldo).toFixed(2)}`;
+            localStorage.setItem('usuario', JSON.stringify(usuario));
+        }
+
+        async function salvarNoServidor() {
+            await fetch(`${API_URL}/atualizar-saldo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: usuario.email, novoSaldo: usuario.saldo })
+            });
+        }
+    </script>
+</body>
+</html>
