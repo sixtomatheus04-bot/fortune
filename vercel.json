@@ -1,9 +1,6 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/login", "destination": "/server.js" },
-    { "source": "/cadastro", "destination": "/server.js" },
-    { "source": "/admin/stats", "destination": "/server.js" },
-    { "source": "/admin/mudar-rtp", "destination": "/server.js" }
+    { "source": "/(.*)", "destination": "/server.js" }
   ]
 }
