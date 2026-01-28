@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortune Bet - House of Chance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0a192f;
+            --accent-gold: #d4af37;
+            --light-blue: #1e3a8a;
+            --text-white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-blue);
+            color: var(--text-white);
+            margin: 0;
+            display: flex;
+        }
+
+        /* Sidebar Lateral */
+        nav {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.3);
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            border-right: 1px solid var(--accent-gold);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            width: 120px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-gold);
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-links li {
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .nav-links li:hover {
+            background: var(--light-blue);
+            color: var(--accent-gold);
+        }
+
+        /* Área Principal */
+        main {
+            margin-left: 290px;
+            padding: 40px;
+            width: 100%;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-cadastro {
+            background: var(--accent-gold);
+            color: var(--primary-blue);
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* Grid de Jogos */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background: #112240;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-gold);
+        }
+
+        .game-thumb {
+            width: 100%;
+            height: 150px;
+            background: #233554;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .game-info h3 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        /* Banner de Destaque */
+        .banner {
+            background: linear-gradient(90deg, #1e3a8a, #0a192f);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border-left: 5px solid var(--accent-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-container">
+            <img src="logo.jpg" alt="Fortune Bet">
+            <h2 style="color: var(--accent-gold); font-size: 1.2em; margin-top: 10px;">FORTUNE BET</h2>
+        </div>
+        <ul class="nav-links">
+            <li><i class="fas fa-home"></i> Início</li>
+            <li><i class="fas fa-fire"></i> Populares</li>
+            <li><i class="fas fa-slot-machine"></i> Cassino</li>
+            <li><i class="fas fa-wallet"></i> Depósito</li>
+            <li><i class="fas fa-user-shield"></i> Ajuda</li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="header-top">
+            <div class="search-bar">
+                <input type="text" placeholder="Procurar jogo..." style="padding: 10px; border-radius: 10px; border: none; width: 300px; background: #112240; color: white;">
+            </div>
+            <div class="auth-btns">
+                <button class="btn-login">Entrar</button>
+                <button class="btn-cadastro">Cadastrar</button>
+            </div>
+        </div>
+
+        <section class="banner">
+            <h1>BÔNUS DE 100% NO PRIMEIRO DEPÓSITO! 💎</h1>
+            <p>Jogue com responsabilidade e busque a sua sorte.</p>
+        </section>
+
+        <h2>🔥 Jogos em Destaque</h2>
+        <div class="games-grid">
+            <div class="game-card" onclick="alert('Faça login para jogar!')">
+                <div class="game-thumb"><i class="fas fa-dragon fa-4x" style="color: #ff4d4d;"></i></div>
+                <div class="game-info"><h3>Fortune Dragon</h3></div>
+            </div>
+            <div class="game-card" onclick="alert('Faça login para jogar!')">
+                <div class="game-thumb"><i class="fas fa-gem fa-4x" style="color: #4da6ff;"></i></div>
+                <div class="game-info"><h3>Diamond Rush</h3></div>
+            </div>
+            <div class="game-card" onclick="alert('Faça login para jogar!')">
+                <div class="game-thumb"><i class="fas fa-coins fa-4x" style="color: var(--accent-gold);"></i></div>
+                <div class="game-info"><h3>Lucky Slot</h3></div>
+            </div>
+            <div class="game-card" onclick="alert('Faça login para jogar!')">
+                <div class="game-thumb"><i class="fas fa-bullseye fa-4x" style="color: #4dff88;"></i></div>
+                <div class="game-info"><h3>Mines Gold</h3></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Deixe vazio para usar a própria URL do site (Vercel)
+        const API_URL = ''; 
+
+        // Função de Cadastro
+        document.querySelector('.btn-cadastro').addEventListener('click', async () => {
+            const nome = prompt("Digite seu nome:");
+            const email = prompt("Digite seu email:");
+            const senha = prompt("Crie uma senha:");
+
+            if(nome && email && senha) {
+                try {
+                    const resposta = await fetch(`${API_URL}/cadastro`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nome, email, senha })
+                    });
+                    const dados = await resposta.json();
+                    alert(dados.mensagem);
+                } catch (error) {
+                    alert("Erro ao conectar com o servidor.");
+                }
+            }
+        });
+
+        // Função de Login
+        document.querySelector('.btn-login').addEventListener('click', async () => {
+            const email = prompt("Seu e-mail:");
+            const senha = prompt("Sua senha:");
+
+            if(email && senha) {
+                try {
+                    const resposta = await fetch(`${API_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, senha })
+                    });
+                    
+                    const dados = await resposta.json();
+                    
+                    if (dados.sucesso) {
+                        alert(`Bem-vindo, ${dados.nome}!\nSeu Saldo: R$ ${dados.saldo}`);
+                        
+                        // SE FOR ADM, MOSTRA O PAINEL
+                        if (dados.cargo === 'adm') {
+                            if(confirm("Painel de Administrador detectado.\nDeseja acessar o painel de controle?")) {
+                                window.location.href = "admin.html"; // Redireciona para o painel
+                            }
+                        }
+                    } else {
+                        alert("Erro: " + dados.mensagem);
+                    }
+                } catch (error) {
+                    alert("Erro ao conectar. O servidor pode estar iniciando (aguarde uns segundos na Vercel).");
+                }
+            }
+        });
+    </script>
+</body>
+</html>
