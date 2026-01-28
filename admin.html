@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Fortune Bet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #0a192f;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .admin-panel {
+            background: #112240;
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #d4af37;
+            width: 400px;
+            text-align: center;
+        }
+        h1 { color: #d4af37; }
+        .stat-box {
+            background: #233554;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+        input {
+            padding: 10px;
+            width: 60px;
+            text-align: center;
+            border-radius: 5px;
+            border: none;
+            font-size: 1.2em;
+        }
+        button {
+            background: #d4af37;
+            color: #0a192f;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 100%;
+        }
+        button:hover { background: #b89628; }
+        .back-btn {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-panel">
+        <h1><i class="fas fa-user-secret"></i> PAINEL GOD MODE</h1>
+        
+        <div class="stat-box">
+            <h3>Usuários Cadastrados</h3>
+            <h2 id="total-users">Carregando...</h2>
+        </div>
+
+        <div class="stat-box">
+            <h3>RTP Global (Chance de Ganhar)</h3>
+            <p>Define a porcentagem de sorte dos jogadores (0 a 100%).</p>
+            <input type="number" id="rtp-input" min="0" max="100"> %
+            <button onclick="mudarRTP()">ATUALIZAR SORTE</button>
+        </div>
+
+        <button class="back-btn" onclick="window.location.href='index.html'">Voltar para o Cassino</button>
+    </div>
+
+    <script>
+        const API_URL = ''; // Vazio para Vercel
+
+        // Carrega dados ao abrir
+        async function carregarDados() {
+            try {
+                const req = await fetch(`${API_URL}/admin/stats`);
+                const dados = await req.json();
+                
+                document.getElementById('total-users').innerText = dados.usuarios;
+                document.getElementById('rtp-input').value = dados.rtp;
+            } catch (error) {
+                alert("Erro ao carregar dados do admin.");
+            }
+        }
+
+        // Função para mudar a sorte
+        async function mudarRTP() {
+            const novoRtp = document.getElementById('rtp-input').value;
+            
+            const req = await fetch(`${API_URL}/admin/mudar-rtp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ novoRtp })
+            });
+            const res = await req.json();
+            
+            if(res.sucesso) {
+                alert(res.mensagem);
+            } else {
+                alert("Erro ao atualizar.");
+            }
+        }
+
+        carregarDados();
+    </script>
+</body>
+</html>
