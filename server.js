@@ -2,10 +2,26 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path'); // Adicionamos isso para mexer com arquivos
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
+// --- CORREÇÃO DA TELA BRANCA ---
+// Isso diz para o servidor mostrar as imagens e o HTML que estão na pasta
+app.use(express.static(__dirname));
+
+// Se alguém acessar a raiz "/", envia o site
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Se alguém acessar o painel, envia o html do admin
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+// -------------------------------
 
 // Conexão Railway
 const db = mysql.createConnection({
@@ -21,7 +37,7 @@ db.connect(err => {
     else console.log('Banco OK');
 });
 
-// LOGIN
+// ROTA DE LOGIN
 app.post('/login', (req, res) => {
     const { email, senha } = req.body;
     db.query('SELECT * FROM usuarios WHERE email = ? AND senha = ?', [email, senha], (err, results) => {
@@ -39,7 +55,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-// CADASTRO
+// ROTA DE CADASTRO
 app.post('/cadastro', (req, res) => {
     const { nome, email, senha } = req.body;
     db.query('INSERT INTO usuarios (nome, email, senha, saldo, cargo) VALUES (?, ?, ?, 0, "comum")', [nome, email, senha], (err, result) => {
@@ -48,15 +64,10 @@ app.post('/cadastro', (req, res) => {
     });
 });
 
-// --- NOVAS ROTAS DE ADMIN ---
-
-// 1. Pegar estatísticas (Total de usuários e RTP atual)
+// ROTAS DE ADMIN
 app.get('/admin/stats', (req, res) => {
-    // Pega total de usuários
     db.query('SELECT count(*) as total FROM usuarios', (err, resultsUsers) => {
-        const totalUsers = resultsUsers[0].total;
-        
-        // Pega configuração atual
+        const totalUsers = resultsUsers[0] ? resultsUsers[0].total : 0;
         db.query('SELECT rtp_global FROM configuracoes WHERE id = 1', (err, resultsConfig) => {
             const rtp = resultsConfig[0] ? resultsConfig[0].rtp_global : 30;
             res.json({ usuarios: totalUsers, rtp: rtp });
@@ -64,7 +75,6 @@ app.get('/admin/stats', (req, res) => {
     });
 });
 
-// 2. Mudar o RTP (A chance de ganhar)
 app.post('/admin/mudar-rtp', (req, res) => {
     const { novoRtp } = req.body;
     db.query('UPDATE configuracoes SET rtp_global = ? WHERE id = 1', [novoRtp], (err, result) => {
@@ -72,7 +82,5 @@ app.post('/admin/mudar-rtp', (req, res) => {
         res.json({ sucesso: true, mensagem: `Chance de vitória alterada para ${novoRtp}%` });
     });
 });
-
-
 
 module.exports = app;
