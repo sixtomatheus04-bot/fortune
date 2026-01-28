@@ -73,9 +73,6 @@ app.post('/admin/mudar-rtp', (req, res) => {
     });
 });
 
-// Rota padrão (API status)
-app.get('/', (req, res) => {
-    res.send('API Fortune Bet rodando!');
-});
+
 
 module.exports = app;
