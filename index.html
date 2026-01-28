@@ -74,6 +74,22 @@
             margin-bottom: 40px;
         }
 
+        /* Área de Login/Usuario */
+        .auth-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-info {
+            display: none; /* Escondido por padrão, aparece se logar */
+            align-items: center;
+            gap: 15px;
+            background: #112240;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--accent-gold);
+        }
+
         .btn-login {
             background: transparent;
             border: 1px solid var(--accent-gold);
@@ -92,7 +108,16 @@
             font-weight: bold;
             border: none;
             cursor: pointer;
-            margin-left: 10px;
+        }
+
+        .btn-sair {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8em;
         }
 
         /* Grid de Jogos */
@@ -130,12 +155,7 @@
             text-align: center;
         }
 
-        .game-info h3 {
-            margin: 0;
-            font-size: 1.1em;
-        }
-
-        /* Banner de Destaque */
+        /* Banner */
         .banner {
             background: linear-gradient(90deg, #1e3a8a, #0a192f);
             padding: 40px;
@@ -157,7 +177,7 @@
             <li><i class="fas fa-fire"></i> Populares</li>
             <li><i class="fas fa-slot-machine"></i> Cassino</li>
             <li><i class="fas fa-wallet"></i> Depósito</li>
-            <li><i class="fas fa-user-shield"></i> Ajuda</li>
+            <li onclick="window.location.href='admin.html'"><i class="fas fa-user-shield"></i> Painel Admin</li>
         </ul>
     </nav>
 
@@ -166,9 +186,22 @@
             <div class="search-bar">
                 <input type="text" placeholder="Procurar jogo..." style="padding: 10px; border-radius: 10px; border: none; width: 300px; background: #112240; color: white;">
             </div>
-            <div class="auth-btns">
-                <button class="btn-login">Entrar</button>
-                <button class="btn-cadastro">Cadastrar</button>
+            
+            <div class="auth-area">
+                <div class="auth-btns" id="botoes-login">
+                    <button class="btn-login" onclick="window.location.href='login.html'">Entrar</button>
+                    <button class="btn-cadastro" onclick="window.location.href='login.html'">Cadastrar</button>
+                </div>
+
+                <div class="user-info" id="painel-usuario">
+                    <div>
+                        <span style="color: #8892b0; font-size: 0.9em;">Saldo:</span>
+                        <strong style="color: #4dff88;" id="user-saldo">R$ 0,00</strong>
+                    </div>
+                    <div style="border-left: 1px solid #444; height: 20px; margin: 0 10px;"></div>
+                    <strong style="color: var(--accent-gold);" id="user-nome">Visitante</strong>
+                    <button class="btn-sair" onclick="sair()">Sair</button>
+                </div>
             </div>
         </div>
 
@@ -179,19 +212,19 @@
 
         <h2>🔥 Jogos em Destaque</h2>
         <div class="games-grid">
-            <div class="game-card" onclick="alert('Faça login para jogar!')">
+            <div class="game-card" onclick="jogar('dragon')">
                 <div class="game-thumb"><i class="fas fa-dragon fa-4x" style="color: #ff4d4d;"></i></div>
                 <div class="game-info"><h3>Fortune Dragon</h3></div>
             </div>
-            <div class="game-card" onclick="alert('Faça login para jogar!')">
+            <div class="game-card" onclick="jogar('diamond')">
                 <div class="game-thumb"><i class="fas fa-gem fa-4x" style="color: #4da6ff;"></i></div>
                 <div class="game-info"><h3>Diamond Rush</h3></div>
             </div>
-            <div class="game-card" onclick="alert('Faça login para jogar!')">
+            <div class="game-card" onclick="jogar('slot')">
                 <div class="game-thumb"><i class="fas fa-coins fa-4x" style="color: var(--accent-gold);"></i></div>
                 <div class="game-info"><h3>Lucky Slot</h3></div>
             </div>
-            <div class="game-card" onclick="alert('Faça login para jogar!')">
+            <div class="game-card" onclick="jogar('mines')">
                 <div class="game-thumb"><i class="fas fa-bullseye fa-4x" style="color: #4dff88;"></i></div>
                 <div class="game-info"><h3>Mines Gold</h3></div>
             </div>
@@ -199,62 +232,45 @@
     </main>
 
     <script>
-        // Deixe vazio para usar a própria URL do site (Vercel)
-        const API_URL = ''; 
+        // --- LÓGICA DO SITE ---
 
-        // Função de Cadastro
-        document.querySelector('.btn-cadastro').addEventListener('click', async () => {
-            const nome = prompt("Digite seu nome:");
-            const email = prompt("Digite seu email:");
-            const senha = prompt("Crie uma senha:");
-
-            if(nome && email && senha) {
-                try {
-                    const resposta = await fetch(`${API_URL}/cadastro`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nome, email, senha })
-                    });
-                    const dados = await resposta.json();
-                    alert(dados.mensagem);
-                } catch (error) {
-                    alert("Erro ao conectar com o servidor.");
-                }
+        // 1. Verifica se tem alguém logado ao abrir a página
+        window.onload = function() {
+            const dadosUsuario = localStorage.getItem('usuario');
+            
+            if (dadosUsuario) {
+                // Se tiver dados salvos, transforma em objeto
+                const user = JSON.parse(dadosUsuario);
+                
+                // Esconde botões de entrar
+                document.getElementById('botoes-login').style.display = 'none';
+                
+                // Mostra painel do usuário
+                document.getElementById('painel-usuario').style.display = 'flex';
+                document.getElementById('user-nome').innerText = user.nome;
+                document.getElementById('user-saldo').innerText = `R$ ${user.saldo}`;
             }
-        });
+        };
 
-        // Função de Login
-        document.querySelector('.btn-login').addEventListener('click', async () => {
-            const email = prompt("Seu e-mail:");
-            const senha = prompt("Sua senha:");
+        // 2. Função de Sair
+        function sair() {
+            localStorage.removeItem('usuario'); // Apaga os dados salvos
+            window.location.reload(); // Recarrega a página
+        }
 
-            if(email && senha) {
-                try {
-                    const resposta = await fetch(`${API_URL}/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, senha })
-                    });
-                    
-                    const dados = await resposta.json();
-                    
-                    if (dados.sucesso) {
-                        alert(`Bem-vindo, ${dados.nome}!\nSeu Saldo: R$ ${dados.saldo}`);
-                        
-                        // SE FOR ADM, MOSTRA O PAINEL
-                        if (dados.cargo === 'adm') {
-                            if(confirm("Painel de Administrador detectado.\nDeseja acessar o painel de controle?")) {
-                                window.location.href = "admin.html"; // Redireciona para o painel
-                            }
-                        }
-                    } else {
-                        alert("Erro: " + dados.mensagem);
-                    }
-                } catch (error) {
-                    alert("Erro ao conectar. O servidor pode estar iniciando (aguarde uns segundos na Vercel).");
-                }
+        // 3. Função ao clicar no jogo
+        function jogar(nomeJogo) {
+            const dadosUsuario = localStorage.getItem('usuario');
+            
+            if (!dadosUsuario) {
+                // Se não estiver logado, manda pro login
+                alert("Você precisa entrar para jogar!");
+                window.location.href = 'login.html';
+            } else {
+                // Se estiver logado (Aqui no futuro você coloca o link do jogo real)
+                alert("Abrindo o jogo " + nomeJogo + "...");
             }
-        });
+        }
     </script>
 </body>
 </html>
