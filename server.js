@@ -120,3 +120,7 @@ app.get('*', (req, res) => {
 });
 
 module.exports = app;
+// No final do server.js, adicione:
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
