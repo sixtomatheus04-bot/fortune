@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuneIA - Monitor de Tendências</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-10 border-b border-gray-700 pb-5">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-400">RuneIA Tracker</h1>
+                <p class="text-gray-400 text-sm">Monitor de tendências automáticas para Instagram/TikTok</p>
+            </div>
+            <button onclick="buscarTrends()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition font-medium">
+                Atualizar Agora
+            </button>
+        </header>
+
+        <div id="loading" class="hidden text-center py-10 text-gray-500 animate-pulse">
+            Buscando tendências no Google e gerando insights com IA...
+        </div>
+
+        <div id="grid-trends" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            </div>
+    </div>
+
+    <script>
+        async function buscarTrends() {
+            const grid = document.getElementById('grid-trends');
+            const loader = document.getElementById('loading');
+            
+            grid.innerHTML = '';
+            loader.classList.remove('hidden');
+
+            try {
+                // Aqui você coloca a URL da sua API no Vercel
+                const response = await fetch('/api/pesquisar');
+                const result = await response.json();
+
+                loader.classList.add('hidden');
+
+                result.data.forEach(item => {
+                    const card = `
+                        <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-blue-900 text-blue-300 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Em Alta</span>
+                                <span class="text-gray-500 text-sm">${item.volume}+ buscas</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">${item.tema}</h3>
+                            <p class="text-gray-400 text-sm mb-4 leading-relaxed italic">"${item.noticiaRelacionada}"</p>
+                            <div class="flex gap-2">
+                                <button class="text-xs bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">Ver Hashtags</button>
+                                <button class="text-xs bg-green-900 text-green-300 px-3 py-1 rounded">Gerar Roteiro</button>
+                            </div>
+                        </div>
+                    `;
+                    grid.innerHTML += card;
+                });
+            } catch (error) {
+                loader.innerText = "Erro ao carregar dados. Verifique o console.";
+                console.error(error);
+            }
+        }
+
+        // Carrega ao abrir a página
+        window.onload = buscarTrends;
+    </script>
+</body>
+</html>
