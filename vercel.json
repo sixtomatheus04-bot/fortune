@@ -1,12 +1,8 @@
 {
-  "version": 2,
-  "builds": [
+  "crons": [
     {
-      "src": "server.js",
-      "use": "@vercel/node"
+      "path": "/api/pesquisar",
+      "schedule": "0 */6 * * *" 
     }
-  ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/server.js" }
   ]
 }
