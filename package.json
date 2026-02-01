@@ -1,12 +1,8 @@
 {
   "name": "runeia-subidor",
   "version": "1.0.0",
-  "main": "api/pesquisar.js",
   "dependencies": {
     "google-trends-api": "^4.9.2",
     "@google/generative-ai": "^0.21.0"
-  },
-  "scripts": {
-    "start": "node api/pesquisar.js"
   }
 }
